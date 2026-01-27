@@ -1,0 +1,180 @@
+html {
+  --bg: #ffffff;
+  --text: #111;
+  --muted: #d6d6d6;
+  --panel: #f3f3f3;
+  --shadow: rgba(0, 0, 0, 0.10);
+  --error-bg: #fff0f0;
+  --error-border: #ffb3b3;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+
+  /* Center everything like your mockup */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 18px;
+}
+
+/* --- Top form (settings) --- */
+form[action="/new"] {
+  width: min(980px, 96vw);
+
+  display: grid;
+  grid-template-columns: 200px 200px 220px 220px auto;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Inputs + selects */
+input[type="text"],
+select {
+  height: 34px;
+  padding: 0 10px;
+  border: 1px solid var(--muted);
+  background: var(--panel);
+  border-radius: 6px;
+  outline: none;
+}
+
+input[type="text"]::placeholder {
+  color: #6b6b6b;
+}
+
+input[type="text"]:focus,
+select:focus {
+  box-shadow: 0 0 0 3px rgba(0,0,0,0.06);
+}
+
+/* Button */
+button[type="submit"] {
+  height: 34px;
+  padding: 0 14px;
+  border: 1px solid #cfcfcf;
+  background: #f6f6f6;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+button[type="submit"]:hover { filter: brightness(0.98); }
+button[type="submit"]:active { transform: translateY(1px); }
+
+/* --- Error message --- */
+p {
+  margin: 0;
+}
+
+
+p {
+  width: min(980px, 96vw);
+  padding: 10px 12px;
+  background: var(--error-bg);
+  border: 1px solid var(--error-border);
+  border-radius: 8px;
+}
+
+/* --- Board styles (for your $boardhtml) --- */
+/* Expecting:
+   <div class="board">
+     <div class="row">
+       <form class="cellForm"><button class="cell">X</button></form>...
+*/
+
+.board {
+  width: 360px;
+  height: 360px;
+
+  border: 10px solid var(--muted);
+  background: #fff;
+  padding: 10px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  box-shadow: 0 6px 14px var(--shadow);
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+  flex: 1;
+  height: 30%;
+}
+
+.cellForm {
+  margin: 0;
+  flex: 1;
+}
+
+.cell {
+  width: 100%;
+  height: 100%;
+
+  border: 8px solid var(--muted);
+  background: #ffffff;
+
+  cursor: pointer;
+
+  font-size: 64px;
+  font-weight: 900;
+  line-height: 1;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  user-select: none;
+}
+
+.cell:hover { filter: brightness(0.98); }
+
+.cell:disabled {
+  cursor: not-allowed;
+  opacity: 0.85;
+  filter: none;
+}
+
+/* --- Responsive --- */
+@media (max-width: 980px) {
+  form[action="/new"] {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "name1 name2"
+      "mode diff"
+      "btn btn";
+    justify-content: stretch;
+  }
+
+  #name1 { grid-area: name1; }
+  #name2 { grid-area: name2; }
+  #gamemode { grid-area: mode; }
+  #difficulty { grid-area: diff; }
+  button[type="submit"] { grid-area: btn; }
+
+  form[action="/new"] > * {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .board {
+    width: 320px;
+    height: 320px;
+  }
+  .cell {
+    font-size: 56px;
+  }
+}
