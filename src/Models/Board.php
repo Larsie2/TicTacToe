@@ -31,7 +31,25 @@ class Board {
         }
         return true;
     }
-    
+
+    public function hasWinner() : bool {
+        $winningLines = [
+            [0,1,2], [3,4,5], [6,7,8],
+            [0,3,6], [1,4,7], [2,5,8],
+            [0,4,8], [2,4,6]
+        ];
+
+        foreach ($winningLines as $line) {
+            if (($this->cells[$line[0]]->GetSymbol() === $this->cells[$line[1]]->GetSymbol()) && 
+                ($this->cells[$line[1]]->GetSymbol() === $this->cells[$line[2]]->GetSymbol()) && 
+                ($this->cells[$line[0]]->GetSymbol() !== PlayerSymbol::None)) {
+                return true;
+            }
+        }
+
+        return false;
+    }   
+
     public function Reset() : void {
         foreach ($this->cells as $cell) {
             $cell->SetSymbol(PlayerSymbol::None);

@@ -111,7 +111,7 @@ p {
   display: flex;
   gap: 10px;
   flex: 1;
-  height: 30%;
+  /* height: 30%; */
 }
 
 .cellForm {

@@ -11,7 +11,7 @@ class Settings {
     public function __construct(string $name1, string $name2, bool $isVsAI, Difficulty $difficulty = null)
     {
         $this->isVsAI = $isVsAI;
-        if ($difficulty) {$this->difficulty = $difficulty; }
+        ($difficulty !== null) ? $this->difficulty = $difficulty : Difficulty::None;
         $this->name1 = $name1;
         $this->name2 = $name2;
     }

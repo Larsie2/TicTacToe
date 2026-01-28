@@ -43,8 +43,44 @@ class Game {
         $this->currentPlayer = $this->p1;
     }
 
+    public function getResult() : string{
+        if ($this->board->IsFull()) {
+            $this->isOver = true;
+            return 'Draw';
+        } elseif ($this->board->hasWinner()) {
+            $this->isOver = true;
+            return 'Win';
+        } else {
+            $this->isOver = false;
+            return 'Play on';
+        }
+
+
+
+    }
+
+    public function makeMove(int $index) : void {
+        $this->board->PlaceSymbol($index, $this->currentPlayer->GetSymbol());
+    }
+
+    public function switchTurn() {
+        if ($this->currentPlayer == $this->p1) {
+            $this->currentPlayer = $this->p2;
+        } else {
+            $this->currentPlayer = $this->p1;
+        }
+    }
+
     public function getBoard() : ?Board {
         return $this->board;
+    }
+
+    public function getSettings() : ?Settings {
+        return $this->settings;
+    }
+    
+    public function getCurrentPlayer() {
+        return $this->currentPlayer;
     }
 
     public function isOver() : bool {

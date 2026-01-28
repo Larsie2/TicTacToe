@@ -13,30 +13,38 @@ class Controller {
     public function __construct() {}
 
     public function index() : void {
-        $this->game = $_SESSION['game'] ?? null;
+        try {
+            $this->game = $_SESSION['game'] ?? null;
 
-        if ($this->game) {
-            $boardhtml = $this->renderBoard();
-        } else {
-            $boardhtml = '';
+            $difficulties = Difficulty::cases();
+
+            $result = $_SESSION['result'] ?? '';
+
+            if ($this->game) {
+                $settings = $this->game->getSettings();
+                $boardhtml = $this->renderBoard();
+            } else {
+                $boardhtml = '';
+            }
+
+            require __DIR__ . '/../../Views/index.php';
+        } catch (Exception $e) {
+            $_SESSION['error'] = $e->getMessage();
+            header('Location: /');
+            exit;
         }
-
-        require __DIR__ . '/../../Views/index.php';
     }
 
     public function newGame() : void {
         try {
             $settings = $this->buildSettingsFromUI();
+
+            $_SESSION['result'] = '';
             
-            
-            if(!$this->game) {
-                $this->game = $_SESSION['game'] ?? new Game();
-            }
+            $this->game = $_SESSION['game'] ?? new Game();
             
             $this->game->Start($settings);
-            // die(var_dump($this->game));
             $_SESSION['game'] = $this->game;
-            // die(var_dump($_SESSION['game']));
     
             header('Location: /');
             exit;
@@ -48,13 +56,19 @@ class Controller {
     }
 
     public function move() : void {
+        $index = $_POST['index'] ?? throw new Exception("No cell selected.");
+        $this->game = $_SESSION['game'];
 
+        $this->game->makeMove($index);
+        $_SESSION['result'] = $this->showResult();
+        $this->game->switchTurn();
+        header('Location: /');
+        exit;
     }
 
     public function renderBoard(): string {
         $game = $this->game;
         $board = $game?->getBoard();
-        // die(var_dump($board));
 
         $html = '<div class="board">';
 
@@ -93,40 +107,55 @@ class Controller {
         return $html;
     }
 
-    private function buildSettingsFromUI() : ?Settings {
-        $name1 = null;
-        $name2 = null;
+    private function showResult () : ?string {
+        $result = $this->game->getResult();
+
+        switch ($result) {
+            case 'Draw':
+                return "<script> alert('It's a draw!')</script>";
+                break;
+            case 'Win':
+                $winner = $this->game->getCurrentPlayer();
+                return '<script> alert("' . $winner->GetName() . ' heeft gewonnen!") </script>';
+                break;
+            default:
+                return '';
+                break;
+        }
+    }
+
+    private function buildSettingsFromUI() : Settings {
         $gamemode = null;
         $difficulty = null;
 
         $name1 = trim($_POST['name1'] ?? '');
         $name2 = trim($_POST['name2'] ?? '');
-        switch ($_POST['gamemode']) {
-            case 'PvP': 
-                $gamemode = false; 
-            break;
-            case 'PvAI': 
-                $gamemode = true; 
-                switch ($_POST['difficulty']) {
-                    case 'Easy': 
-                        $difficulty = Difficulty::Easy; 
-                    break;
-                    case 'Hard': 
-                        $difficulty = Difficulty::Hard; 
-                    break;
-                    default: 
-                    throw new Exception("Invalid difficulty selection."); 
-                    break; 
-                }
-            break;
-            default: 
+
+        $gamemode = $_POST['gamemode'] ?? null;
+        if ($gamemode !== 'PvP' && $gamemode !== 'PvAI') {
             throw new Exception("Invalid gamemode selection."); 
-            break; 
         }
-        if ($name1 === '' || $name2 === '' || !isset($gamemode)) {
-            throw new Exception("All required fields must be filled in");
+
+        $isVsAI = ($gamemode === 'PvAI');
+
+        $difficulty = null;
+        if ($isVsAI) {
+            $diffIn = $_POST['difficulty'] ?? '';
+            if ($diffIn === '') {
+                throw new Exception("Invalid difficulty selection."); 
+            } else {
+                try {
+                    $difficulty = Difficulty::from($diffIn);
+                } catch (\ValueError $e) {
+                    throw new Exception("Invalid difficulty selection."); 
+                }
+            }
         }
         
-        return new Settings($name1, $name2, $gamemode, $difficulty);
+        if ($name1 === '' || $name2 === '') {
+            throw new Exception("All required fields must be filled in");
+        }
+
+        return new Settings($name1, $name2, $isVsAI, $difficulty);
     }
 }

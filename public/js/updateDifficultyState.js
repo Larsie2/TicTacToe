@@ -3,7 +3,7 @@ const difficulty = document.getElementById('difficulty');
 
 function updateDifficultyState() {
     if (gamemode.value === "PvP") {
-        difficulty.value = '';
+        difficulty.value = 'None';
         difficulty.disabled = true;
     } else {
         difficulty.disabled = false;
