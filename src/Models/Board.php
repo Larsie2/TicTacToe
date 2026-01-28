@@ -25,7 +25,7 @@ class Board {
 
     public function IsFull() : bool {
         foreach ($this->cells as $cell) {
-            if ($cell->GetSymbol() !== PlayerSymbol::None) {
+            if ($cell->GetSymbol() === PlayerSymbol::None) {
                 return false;
             }
         }

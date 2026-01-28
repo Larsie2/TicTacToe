@@ -112,7 +112,7 @@ class Controller {
 
         switch ($result) {
             case 'Draw':
-                return "<script> alert('It's a draw!')</script>";
+                return '<script> alert("Draw!")</script>';
                 break;
             case 'Win':
                 $winner = $this->game->getCurrentPlayer();
