@@ -6,6 +6,7 @@ use src\Models\Settings;
 use Exception;
 use src\Enums\Difficulty;
 use src\Enums\PlayerSymbol;
+use src\Models\AIPlayer;
 
 class Controller {
     private ?Game $game = null;
@@ -21,8 +22,17 @@ class Controller {
             $result = $_SESSION['result'] ?? '';
 
             if ($this->game) {
+                $isAITurn = false;
+                if (!$this->game->isOver()) {
+                    $player = $this->game->getCurrentPlayer();
+                    $isAITurn = $player instanceof AIPlayer;
+                    if ($player instanceof AIPlayer) {
+                        $player->ChooseMove($this->game->getBoard(), $this->game->getPlayer1()->getSymbol(), $player->getSymbol());
+                        $this->move();
+                    }
+                }
                 $settings = $this->game->getSettings();
-                $boardhtml = $this->renderBoard();
+                $boardhtml = $this->renderBoard($isAITurn);
             } else {
                 $boardhtml = '';
             }
@@ -43,7 +53,7 @@ class Controller {
             
             $this->game = $_SESSION['game'] ?? new Game();
             
-            $this->game->Start($settings);
+            $this->game->start($settings);
             $_SESSION['game'] = $this->game;
     
             header('Location: /');
@@ -66,7 +76,7 @@ class Controller {
         exit;
     }
 
-    public function renderBoard(): string {
+    public function renderBoard(bool $isAITurn): string {
         $game = $this->game;
         $board = $game?->getBoard();
 
@@ -89,7 +99,7 @@ class Controller {
                         $symbol = "O";
                     }
                     
-                    $disabled = ($cellsymbol !== PlayerSymbol::None) || ($game !== null && $game->isOver());
+                    $disabled = ($cellsymbol !== PlayerSymbol::None) || ($game !== null && $game->isOver()) || $isAITurn;
                 }
 
 
@@ -107,7 +117,7 @@ class Controller {
         return $html;
     }
 
-    private function showResult () : ?string {
+    private function showResult () : string {
         $result = $this->game->getResult();
 
         switch ($result) {
@@ -116,7 +126,7 @@ class Controller {
                 break;
             case 'Win':
                 $winner = $this->game->getCurrentPlayer();
-                return '<script> alert("' . $winner->GetName() . ' heeft gewonnen!") </script>';
+                return '<script> alert("' . $winner->getName() . ' heeft gewonnen!") </script>';
                 break;
             default:
                 return '';
@@ -125,9 +135,6 @@ class Controller {
     }
 
     private function buildSettingsFromUI() : Settings {
-        $gamemode = null;
-        $difficulty = null;
-
         $name1 = trim($_POST['name1'] ?? '');
         $name2 = trim($_POST['name2'] ?? '');
 
@@ -141,15 +148,17 @@ class Controller {
         $difficulty = null;
         if ($isVsAI) {
             $diffIn = $_POST['difficulty'] ?? '';
-            if ($diffIn === '') {
+            try {
+                $difficulty = Difficulty::from($diffIn);
+            } catch (Exception $e) {
                 throw new Exception("Invalid difficulty selection."); 
-            } else {
-                try {
-                    $difficulty = Difficulty::from($diffIn);
-                } catch (\ValueError $e) {
-                    throw new Exception("Invalid difficulty selection."); 
-                }
             }
+
+            if ($difficulty === Difficulty::None) {
+                throw new Exception("Invalid difficulty selection.");
+            }
+        } else {
+            $difficulty = Difficulty::None;
         }
         
         if ($name1 === '' || $name2 === '') {

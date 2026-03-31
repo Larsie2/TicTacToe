@@ -18,12 +18,12 @@
         </select>
 
         <select name="difficulty" id="difficulty">
-            <option value="None">Kies een moeilijkheid</option>
-            <option value="Easy">Easy</option>
-            <option value="Hard">Hard</option>
+            <option value="None" <?= ($settings?->getDifficulty() === $difficulties[0]) ? 'selected' : '' ?>>Kies een moeilijkheid</option>
+            <option value="Easy" <?= ($settings?->getDifficulty() === $difficulties[1]) ? 'selected' : '' ?>>Easy</option>
+            <option value="Hard" <?= ($settings?->getDifficulty() === $difficulties[2]) ? 'selected' : '' ?>>Hard</option>
         </select>
 
-        <button type="submit">New Game</button>
+        <button type="submit" class="newGame">New Game</button>
     </form>
     <?php if (isset($_SESSION['error'])): ?>
         <p><?= htmlspecialchars($_SESSION['error']) ?></p>

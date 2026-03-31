@@ -10,22 +10,22 @@ class Board {
     public function __construct() {
         for ($i = 0; $i < 9; $i++) { 
             $cell = new Cell();
-            $cell->SetSymbol(PlayerSymbol::None);
+            $cell->setSymbol(PlayerSymbol::None);
             $this->cells[] = $cell;
         }
     }
 
     public function getCellSymbol(int $index) : PlayerSymbol {
-        return $this->cells[$index]->GetSymbol();
+        return $this->cells[$index]->getSymbol();
     }
 
-    public function PlaceSymbol(int $index, PlayerSymbol $symbol) {
-        $this->cells[$index]->SetSymbol($symbol);
+    public function placeSymbol(int $index, PlayerSymbol $symbol) {
+        $this->cells[$index]->setSymbol($symbol);
     }
 
-    public function IsFull() : bool {
+    public function isFull() : bool {
         foreach ($this->cells as $cell) {
-            if ($cell->GetSymbol() === PlayerSymbol::None) {
+            if ($cell->getSymbol() === PlayerSymbol::None) {
                 return false;
             }
         }
@@ -42,7 +42,8 @@ class Board {
         foreach ($winningLines as $line) {
             if (($this->cells[$line[0]]->GetSymbol() === $this->cells[$line[1]]->GetSymbol()) && 
                 ($this->cells[$line[1]]->GetSymbol() === $this->cells[$line[2]]->GetSymbol()) && 
-                ($this->cells[$line[0]]->GetSymbol() !== PlayerSymbol::None)) {
+                ($this->cells[$line[0]]->GetSymbol() !== PlayerSymbol::None)) 
+            {
                 return true;
             }
         }
@@ -50,13 +51,13 @@ class Board {
         return false;
     }   
 
-    public function Reset() : void {
+    public function reset() : void {
         foreach ($this->cells as $cell) {
             $cell->SetSymbol(PlayerSymbol::None);
         }
     }
-
-    public function GetAvailableMoves() : array {
+    
+    public function getAvailableMoves() : array {
         $availableCellIds = [];
         for ($i = 0; $i < 9; $i++) {
             if ($this->getCellSymbol($i) === PlayerSymbol::None) {

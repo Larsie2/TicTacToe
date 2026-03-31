@@ -21,13 +21,13 @@ class Game {
         $this->board = new Board();
     }
     
-    public function Start(Settings $settings) : void {
+    public function start(Settings $settings) : void {
         $this->settings = $settings;
 
         if ($this->board === null) {
             $this->board = new Board();
         } else {
-            $this->board->Reset();
+            $this->board->reset();
         }
 
         $this->isOver = false;
@@ -44,23 +44,20 @@ class Game {
     }
 
     public function getResult() : string{
-        if ($this->board->IsFull()) {
-            $this->isOver = true;
-            return 'Draw';
-        } elseif ($this->board->hasWinner()) {
+        if ($this->board->hasWinner()) {
             $this->isOver = true;
             return 'Win';
+        } elseif ($this->board->isFull()) {
+            $this->isOver = true;
+            return 'Draw';
         } else {
             $this->isOver = false;
             return 'Play on';
         }
-
-
-
     }
 
     public function makeMove(int $index) : void {
-        $this->board->PlaceSymbol($index, $this->currentPlayer->GetSymbol());
+        $this->board->placeSymbol($index, $this->currentPlayer->getSymbol());
     }
 
     public function switchTurn() {
@@ -85,5 +82,13 @@ class Game {
 
     public function isOver() : bool {
         return $this->isOver;
+    }
+
+    public function getPlayer1() {
+        return $this->p1;
+    }
+
+    public function getPlayer2() {
+        return $this->p2;
     }
 }

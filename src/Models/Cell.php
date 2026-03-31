@@ -10,11 +10,11 @@ class Cell {
         $this->symbol = $symbol;
     }
 
-    public function SetSymbol(PlayerSymbol $symbol) : void {
+    public function setSymbol(PlayerSymbol $symbol) : void {
         $this->symbol = $symbol;
     }
 
-    public function GetSymbol() : PlayerSymbol {
+    public function getSymbol() : PlayerSymbol {
         return $this->symbol;
     }
 }

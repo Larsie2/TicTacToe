@@ -13,11 +13,11 @@ abstract class Player {
         $this->symbol = $symbol;
     }
 
-    public function GetName() : string {
+    public function getName() : string {
         return $this->name;
     }
 
-    public function GetSymbol() : PlayerSymbol {
+    public function getSymbol() : PlayerSymbol {
         return $this->symbol;
     }
 }

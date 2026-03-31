@@ -14,7 +14,7 @@ body {
   margin: 0;
   min-height: 100vh;
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-  background: var(--bg);
+  background-image: radial-gradient(circle, rgb(10, 173, 10), rgb(86, 203, 28), rgb(7, 180, 125));
   color: var(--text);
 
   /* Center everything like your mockup */
@@ -58,7 +58,7 @@ select:focus {
 }
 
 /* Button */
-button[type="submit"] {
+.newGame {
   height: 34px;
   padding: 0 14px;
   border: 1px solid #cfcfcf;
@@ -68,8 +68,8 @@ button[type="submit"] {
   font-weight: 600;
 }
 
-button[type="submit"]:hover { filter: brightness(0.98); }
-button[type="submit"]:active { transform: translateY(1px); }
+.newGame:hover { filter: brightness(0.98); }
+.newGame:active { transform: translateY(1px); }
 
 /* --- Error message --- */
 p {
@@ -120,8 +120,8 @@ p {
 }
 
 .cell {
-  width: 100%;
-  height: 100%;
+  width: 90%;
+  height: 90%;
 
   border: 8px solid var(--muted);
   background: #ffffff;
